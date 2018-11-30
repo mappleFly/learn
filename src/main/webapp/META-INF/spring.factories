@@ -1,0 +1,2 @@
+#注册springboot监听器
+org.springframework.context.ApplicationListener=com.lms.learn.util.MyListener
