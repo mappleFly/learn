@@ -1,12 +1,90 @@
 server:
   port: 9999
-
+#热部署生效exclude(排除)additional-paths(需要重启目录)
 spring:
+# 如果您了解注意事项并仍然希望应用程序使用后缀模式匹配，则需要进行以下配置
+  mvc:
+    contentnegotiation:
+      favor-path-extension: true
+  profiles:
+    active: product
+  datasource:
+      #####jdbc配置
+      type: com.alibaba.druid.pool.DruidDataSource
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/learn?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+      username: root
+      password: root
+      #####datasource druid pool
+      druid:
+        filters: stat
+        initial-size: 10
+        max-active: 20
+        min-idle: 8
+        web-stat-filter:
+          enabled: true
+          url-pattern: /*
+          exclusions: /*.js,/*.gif,/*.jpg,/*.png,/*.css,/*.ico,/druid/*
+  #        最大session数
+          session-stat-max-count: 100000
+  #        session统计功能
+          session-stat-enable: true
+          #你可以配置principalSessionName，使得druid能够知道当前的session的用户是谁
+          principal-session-name: admin
+          principal-cookie-name: admin
+  #        置profileEnable能够监控单个url调用的sql列表。
+          profile-enable: true
+  ## StatViewServlet配置，说明请参考Druid Wiki，配置_StatViewServlet配置
+        stat-view-servlet:
+          enabled: true
+          url-pattern: /druid/*
+          reset-enable: true
+          login-username: admin
+          login-password: 11111
+          allow: 127.0.0.1
+          deny: 192.168.10.1
+        ## Spring监控配置，说明请参考Druid Github Wiki，配置_Druid和Spring关联监控配置
+        # Spring监控AOP切入点，如x.y.z.service.*,配置多个英文逗号分隔
+        aop-patterns: com.lms.learn.service.*
+        filter:
+          wall:
+            enabled: true
+            db-type: mysql
+            config:
+              alter-table-allow: false
+              truncate-allow: false
+              drop-table-allow: false
+              #是否允许非以上基本语句的其他语句，缺省关闭，通过这个选项就能够屏蔽DDL。
+              none-base-statement-allow: false
+              #检查UPDATE语句是否无where条件，这是有风险的，但不是SQL注入类型的风险
+              update-where-none-check: true
+              #SELECT ... INTO OUTFILE 是否允许，这个是mysql注入攻击的常见手段，缺省是禁止的
+              select-into-outfile-allow: false
+              #是否允许调用Connection.getMetadata方法，这个方法调用会暴露数据库的表信息
+              metadata-allow: true
+            #对被认为是攻击的SQL进行LOG.error输出
+            log-violation: true
+            #对被认为是攻击的SQL抛出SQLExcepton
+            throw-exception: true
   devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+      exclude: WEB-INF/**
     livereload:
       enabled: true
-
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: UTC
 my:
   servers:
       - dev.bar.com
       - foo.bar.com
+#调式模式 能追踪loggers 内嵌容器，Hibernate生成的schema，Spring全部的portfolio
+trace: true
+logging:
+  file: D:/my.log

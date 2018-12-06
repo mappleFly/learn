@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "my",
+      "type": "com.lms.learn.config.Config",
+      "sourceType": "com.lms.learn.config.Config"
+    }
+  ],
+  "properties": [
+    {
+      "name": "my.servers",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "com.lms.learn.config.Config"
+    }
+  ],
+  "hints": []
+}
